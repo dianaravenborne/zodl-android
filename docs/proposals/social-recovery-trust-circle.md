@@ -22,37 +22,52 @@ That's what this document designs.
 
 ## 2. Naming
 
-I'll lead with three candidates and then explain.
+After a round of review, the names landed at:
 
-**Recommended: Circle of Keys** (or just "Circle")
+- **Trust Circle** — the feature (and the user's group of trusted people).
+- **Keeper** — a trusted person holding one fragment.
+- **Fragment** — what each Keeper holds (one SLIP-39 share, in user-facing language).
 
-Backup candidates considered:
-- **Trust Circle**
-- **Keepers**
-- **Guardians**
+### How we got here
 
-Tiered out:
-- "Buddy backup" (user's working name) — friendly, but reads as casual. Backup of your wallet sounds like backup of your photos. The user is putting *real money* into someone else's hands; the word should carry weight.
+For the feature name, the bar is *instills confidence*. The user is putting custody of recovery — real money — into the hands of other humans; the word can't read as casual.
+
+Candidates considered:
+
+- "Buddy backup" (working name) — friendly, but reads as a photo-backup tool, not a recovery system for real funds.
 - "Social recovery" — accurate but jargon. Fine as a category descriptor in docs and settings; bad as the product name.
 - "Friends backup" / "Family backup" — locks the user into one social relationship model. A user might genuinely want a lawyer + their sibling + a friend.
-- "Shamir Backup" (Trezor's term) — accurate, technical, and intimidating. Trezor can use it because their users self-select for technical literacy. ZODL is targeting a broader audience.
+- "Shamir Backup" (Trezor's term) — accurate, technical, intimidating. Trezor's audience self-selects for technical literacy; ZODL targets a broader user base.
+- "Guardians" — used by Argent and other account-abstraction wallets. Recognizable but crowded; also implies a more active role than these people actually have.
 - "Recovery Network" — corporate.
-- "Safety Net" — close, but evokes "if you fall" — already-failed framing.
-- "Lifeline" — same problem, plus medical connotations.
-- "Keepers" — solid. The people who hold pieces of your wallet are "Keepers." Verb-able: "Add a Keeper."
-- "Guardians" — slightly heavier. Used by Argent and others in account-abstraction recovery. Crowded.
-- **"Circle of Keys"** — recommended.
-  - Evokes a physical, tangible thing (a circle, a key).
-  - "Circle" is the user-facing noun (their **Circle** is the group of trusted people).
-  - "Keepers" is the per-person noun ("Add a Keeper to your Circle").
-  - "Key" surfaces what's actually being shared without the technical baggage of "share" / "Shamir share."
-  - Action verbs are clean: *form your Circle, send a Key to a Keeper, recover your wallet with your Circle.*
-  - Marketing-able without being saccharine.
-  - Survives the Spanish/Portuguese/German translation test (Círculo, Círculo, Kreis).
+- "Safety Net" / "Lifeline" — both evoke *if you fall*, an already-failed framing. We want a feature that signals readiness, not damage control.
+- **"Trust Circle"** — what we picked.
+  - "Trust" puts the load-bearing word first: this is a system of trust, not a system of cryptography (the cryptography is incidental to the user experience).
+  - "Circle" is a clean, geometrically-evocative noun — it pairs naturally with the visual metaphor (§ Appendix B: a literal circle of avatars).
+  - Verb-able: *form your Trust Circle, add a Keeper to your Circle, recover with your Circle.*
+  - Translates cleanly: Círculo de Confianza, Círculo de Confiança, Vertrauenskreis. No idiom-clashes.
 
-For the rest of this doc I'll use "Circle" for the feature, "Keeper" for a person holding a share, "Key" for the share itself.
+For the per-person noun, "Keeper" was the strongest from the start:
 
-If "Circle of Keys" is too poetic for the team's taste, the runner-up is **"Trust Circle"** (more literal, less evocative).
+- Active and protective without being grandiose (compared to "Guardian," which implies a quasi-legal role).
+- Clear about the function: *they keep your fragment.*
+- Verb-able: *add a Keeper, replace a Keeper, ask a Keeper to send their fragment back.*
+
+For the per-share noun, the original draft had "Key" — which collides badly with **private key** / **public key** / **recovery key**, all crypto terms users already vaguely know. Reusing "Key" would conflate "the thing your Keeper holds" with "the thing that controls your money" — the opposite of the mental model we want.
+
+Alternatives reviewed for the share concept:
+
+- **Secret** — accurate (it literally is a Shamir secret share). Tonally heavy; "I sent my Secret to my Keeper" reads slightly ominous. Also competes with the colloquial "wallet secret" meaning of the full seed. Fine but not ideal.
+- **Shard** — technical and evocative, but reads as nerdy. People who know what database sharding is will recognize it; people who don't will be mildly confused.
+- **Piece** — clear but unremarkable. "Send a Piece to a Keeper" lacks weight.
+- **Fragment** — what we picked.
+  - Concrete: a fragment is obviously *part of a whole*, which is exactly the mental model.
+  - Action verbs read naturally: *send a Fragment, hold a Fragment, collect Fragments, gather your Fragments to recover.*
+  - No collision with any existing crypto vocabulary the user has encountered.
+  - Visualizes well — broken-apart-but-rejoinable, which is what SLIP-39 actually does.
+  - Translates cleanly: Fragmento, Fragmento, Fragment.
+
+For the rest of this document: **Circle** = the feature/group, **Keeper** = one trusted person, **Fragment** = one share.
 
 ---
 
@@ -64,7 +79,7 @@ If "Circle of Keys" is too poetic for the team's taste, the runner-up is **"Trus
 
 **P2 — New user.** Installing ZODL for the first time. We can offer Circle setup as one of the backup options during onboarding, alongside seed phrase.
 
-**P3 — Keeper.** Doesn't necessarily have a ZODL wallet of their own (yet). Their friend wants to give them a Key. Today's app requires them to install ZODL to accept it. **Design implication:** the install/onboard path for a Keeper-only flow needs to be lightweight; we can't gate Key acceptance behind full wallet creation.
+**P3 — Keeper.** Doesn't necessarily have a ZODL wallet of their own (yet). Their friend wants to give them a Fragment. Today's app requires them to install ZODL to accept it. **Design implication:** the install/onboard path for a Keeper-only flow needs to be lightweight; we can't gate Fragment acceptance behind full wallet creation.
 
 **P4 — Recovering user.** Has lost their phone, has a new device, has their Circle, needs to walk through reconstitution.
 
@@ -73,9 +88,9 @@ If "Circle of Keys" is too poetic for the team's taste, the runner-up is **"Trus
 **As an existing ZODL user (P1), I want to**
 - Convert my existing BIP-39 wallet into a SLIP-39 Circle without changing my Zcash receive addresses, so my existing balance and history are preserved.
 - Choose how many Keepers I want and how many of them have to cooperate to recover.
-- See clearly which Keys have been delivered, which are still on my device waiting to go out, and who holds what.
-- Hand a Key to a Keeper in person via QR-scan, with confirmation on both sides, and have the Key wiped from my device once delivered.
-- Be reminded (gently, persistently) when I have undelivered Keys sitting on my device — those are a liability.
+- See clearly which Fragments have been delivered, which are still on my device waiting to go out, and who holds what.
+- Hand a Fragment to a Keeper in person via QR-scan, with confirmation on both sides, and have the Fragment wiped from my device once delivered.
+- Be reminded (gently, persistently) when I have undelivered Fragments sitting on my device — those are a liability.
 - Replace a Keeper later if they lose their phone, ghost me, or our relationship changes.
 - Test that recovery works without actually losing my wallet.
 
@@ -83,16 +98,16 @@ If "Circle of Keys" is too poetic for the team's taste, the runner-up is **"Trus
 - Be offered Circle backup as a first-class backup option during onboarding, framed clearly relative to seed-phrase backup so I can make an informed choice (or do both).
 
 **As a Keeper (P3), I want to**
-- Accept a Key from a friend with a clear explanation of what I'm taking on (I'm not getting their money; I'm holding a fragment that needs T fragments to reconstitute).
-- See in my app a list of whose Keys I'm holding, with their nickname.
+- Accept a Fragment from a friend with a clear explanation of what I'm taking on (I'm not getting their money; I'm holding a fragment that needs T fragments to reconstitute).
+- See in my app a list of whose Fragments I'm holding, with their nickname.
 - Be able to participate in their recovery when asked, with explicit consent.
-- Optionally delete a Key I'm holding (with strong friction and warning).
+- Optionally delete a Fragment I'm holding (with strong friction and warning).
 - Not be a single point of failure (the math guarantees this; the UI should reinforce it).
 
 **As a recovering user (P4), I want to**
 - Start a recovery on a new device.
-- Contact my Keepers via the app or out-of-band (call, text), have them open ZODL, and approve sending their Key back to me.
-- See my progress (X of T Keys collected) and know how many more I need.
+- Contact my Keepers via the app or out-of-band (call, text), have them open ZODL, and approve sending their Fragment back to me.
+- See my progress (X of T Fragments collected) and know how many more I need.
 - Have the recovery either complete (wallet restored) or fail clearly with what to do next.
 
 ### 3.3 Non-goals (this proposal)
@@ -101,7 +116,7 @@ If "Circle of Keys" is too poetic for the team's taste, the runner-up is **"Trus
 - Time-locked recovery / dead-man switches.
 - Inheritance flows (recovery after the user's death). These are real and important and out of scope for v1; the Circle data model should not preclude them in v2.
 - Recovery via untrusted third-party (custodian-assisted recovery).
-- Reissuing a Key to the same Keeper without re-running the threshold ceremony (potential v2; raises subtle threat-model questions).
+- Reissuing a Fragment to the same Keeper without re-running the threshold ceremony (potential v2; raises subtle threat-model questions).
 
 ---
 
@@ -115,7 +130,7 @@ This is the part that decides whether the feature works or not. The user has to 
 
 The product surface for this is two things: the **threshold picker** (§5.3), and the **Circle health screen** (§5.10).
 
-**Mental model anti-pattern to avoid:** never use the word "share" in user-facing copy. Engineers know what a share is; users hear "share" and think "social media share, send to all." Use "Key" or "Key piece." When we have to be precise (settings → advanced), we can say "SLIP-39 share" once in a tooltip and move on.
+**Mental model anti-pattern to avoid:** never use the word "share" in user-facing copy. Engineers know what a share is; users hear "share" and think "social media share, send to all." Use "Fragment." When we have to be precise (settings → advanced), we can say "SLIP-39 share" once in a tooltip and move on.
 
 ---
 
@@ -125,16 +140,16 @@ I'll wireframe each screen as ASCII (good enough to communicate layout to engine
 
 ### 5.1 Entry points
 
-- **Onboarding** (P2): final backup step adds "Circle of Keys (recommended)" alongside "Seed phrase." Default to Circle; surface seed as alternative.
-- **Settings → Backup & Recovery** (P1): existing path. Add "Circle of Keys" as a top-level item alongside today's seed-phrase backup.
-- **Home banner** (P1): if the user has chosen Circle but has undelivered Keys, persistent banner *"You have 3 Keys still on this device. Meet up with your Keepers."*
-- **Notifications**: weekly reminder while undelivered Keys exist on the device.
+- **Onboarding** (P2): final backup step adds "Trust Circle (recommended)" alongside "Seed phrase." Default to Circle; surface seed as alternative.
+- **Settings → Backup & Recovery** (P1): existing path. Add "Trust Circle" as a top-level item alongside today's seed-phrase backup.
+- **Home banner** (P1): if the user has chosen Circle but has undelivered Fragments, persistent banner *"You have 3 Fragments still on this device. Meet up with your Keepers."*
+- **Notifications**: weekly reminder while undelivered Fragments exist on the device.
 
 ### 5.2 Circle landing screen
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Circle of Keys                         ⋮  │
+│ ←  Trust Circle                         ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
 │        ◯ ◯ ◯ ◯ ◯                              │
@@ -152,7 +167,7 @@ I'll wireframe each screen as ASCII (good enough to communicate layout to engine
 │   │     Set up your Circle              │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
-│   I'm holding Keys for someone else  ›        │
+│   I'm holding Fragments for someone else  ›        │
 │   Recover a wallet using my Circle   ›        │
 │                                               │
 └───────────────────────────────────────────────┘
@@ -160,7 +175,7 @@ I'll wireframe each screen as ASCII (good enough to communicate layout to engine
 
 - **Primary CTA**: Set up your Circle.
 - **Secondary actions**:
-  - I'm holding Keys for someone else → entry for P3.
+  - I'm holding Fragments for someone else → entry for P3.
   - Recover a wallet using my Circle → entry for P4.
 - **Why three CTAs from one screen?** Because P1, P3, P4 each arrive here from different mental contexts. Stacking them avoids hiding the Keeper/Recovery flows behind a hamburger.
 
@@ -213,7 +228,7 @@ This is the load-bearing screen for the mental model.
 │   Add 5 Keepers to your Circle.               │
 │                                               │
 │   Give each one a name so you remember who    │
-│   holds which Key. They'll see this name too. │
+│   holds which Fragment. They'll see this name too. │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
 │   │ Keeper 1                            │    │
@@ -233,7 +248,7 @@ This is the load-bearing screen for the mental model.
 │   └─────────────────────────────────────┘    │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │     Generate Keys                    │    │
+│   │     Generate Fragments                    │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
 └───────────────────────────────────────────────┘
@@ -241,9 +256,9 @@ This is the load-bearing screen for the mental model.
 
 - Pre-populate from existing address book if the user has nicknamed contacts; offer suggest-as-you-type.
 - "Safety deposit box (paper)" — important: one of the slots can be **a paper backup the user keeps themselves**. That's the user being their own Keeper. Show it in §5.5 with a different icon and a paper-export action (QR + printable text).
-- Names are local + sent with the Key. The Keeper sees "You're holding a Key for [user's display name]" when accepting (§5.7).
+- Names are local + sent with the Fragment. The Keeper sees "You're holding a Fragment for [user's display name]" when accepting (§5.7).
 
-### 5.5 Keys generated — the "go meet your Keepers" state
+### 5.5 Fragments generated — the "go meet your Keepers" state
 
 ```
 ┌───────────────────────────────────────────────┐
@@ -251,19 +266,19 @@ This is the load-bearing screen for the mental model.
 ├───────────────────────────────────────────────┤
 │                                               │
 │   ╭───────────────────────────────────╮      │
-│   │  5 Keys created.                   │     │
+│   │  5 Fragments created.                   │     │
 │   │  Meet up with each Keeper to       │     │
-│   │  hand them their Key.              │     │
+│   │  hand them their Fragment.              │     │
 │   ╰───────────────────────────────────╯      │
 │                                               │
-│   Mom              ● Key on device   Send  ›  │
-│   Sam              ● Key on device   Send  ›  │
-│   Jay              ● Key on device   Send  ›  │
-│   Lawyer           ● Key on device   Send  ›  │
-│   Safety deposit   ● Key on device   Save  ›  │
+│   Mom              ● Fragment on device   Send  ›  │
+│   Sam              ● Fragment on device   Send  ›  │
+│   Jay              ● Fragment on device   Send  ›  │
+│   Lawyer           ● Fragment on device   Send  ›  │
+│   Safety deposit   ● Fragment on device   Save  ›  │
 │                                               │
 │                                               │
-│   ⚠  These Keys are sitting on this device.   │
+│   ⚠  These Fragments are sitting on this device.   │
 │      Until you deliver them, your Circle is   │
 │      not protecting anything.                 │
 │                                               │
@@ -276,7 +291,7 @@ This is the load-bearing screen for the mental model.
 - **Status dots** make undelivered visible at a glance: orange "on device," green "delivered."
 - Tapping "Send →" opens §5.6 (delivery flow).
 - "Save →" for the paper slot opens an export sheet (printable PDF + QR).
-- **Recurring warning**: until all N (or N-1) Keys are off the device, the device itself is a single point of failure — same security posture as a regular seed-on-phone setup. The home-screen banner reinforces this until delivery is complete.
+- **Recurring warning**: until all N (or N-1) Fragments are off the device, the device itself is a single point of failure — same security posture as a regular seed-on-phone setup. The home-screen banner reinforces this until delivery is complete.
 - **"Why not just print all five"** is a tooltip-link, not a hidden FAQ. Anticipated user objection; answering it inline reduces support load and builds confidence.
 
 ### 5.6 Delivery ceremony (in-person QR exchange)
@@ -287,11 +302,11 @@ Two-screen split: the giver's flow and the Keeper's flow, designed to happen at 
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Sending Mom's Key                      ⋮  │
+│ ←  Sending Mom's Fragment                      ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
 │   Have Mom open ZODL and tap                  │
-│   "I'm holding Keys for someone else."        │
+│   "I'm holding Fragments for someone else."        │
 │                                               │
 │   When she's ready, scan her QR code.         │
 │                                               │
@@ -314,14 +329,14 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 │                                               │
 │   ┌─────────────────────────────────────┐    │
 │   │                                     │    │
-│   │     [ QR with encrypted Key ]       │    │
+│   │     [ QR with encrypted Fragment ]       │    │
 │   │                                     │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
 │   Waiting for Mom to confirm…  ●○○            │
 │                                               │
 │   ✓  Mom confirmed receipt.                   │
-│      This Key has been removed from your      │
+│      This Fragment has been removed from your      │
 │      device.                                  │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
@@ -330,8 +345,8 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 └───────────────────────────────────────────────┘
 ```
 
-- **Two-way handshake.** Giver scans Keeper's request QR → Giver displays encrypted Key QR → Keeper scans it → Keeper computes an ack hash → Keeper displays ack QR → Giver scans ack → Giver wipes the Key locally.
-- **Why two QRs each way**: prevents shoulder-surfing (an encrypted Key QR captured by a bystander camera is useless without the Keeper's ephemeral private key) AND gives the giver cryptographic proof of delivery before wiping. If the ack QR is never scanned, the Key stays on the device.
+- **Two-way handshake.** Giver scans Keeper's request QR → Giver displays encrypted Fragment QR → Keeper scans it → Keeper computes an ack hash → Keeper displays ack QR → Giver scans ack → Giver wipes the Fragment locally.
+- **Why two QRs each way**: prevents shoulder-surfing (an encrypted Fragment QR captured by a bystander camera is useless without the Keeper's ephemeral private key) AND gives the giver cryptographic proof of delivery before wiping. If the ack QR is never scanned, the Fragment stays on the device.
 - **"Or share via secure messenger"** is the fallback for remote handoff (Signal, etc.). De-emphasized but present — physical meetings aren't always possible. Same crypto envelope; just a different transport. Important UX caveat in §6.3.
 - **Confirmation copy** is explicit: "removed from your device." We don't leave room for the user to wonder whether a copy persists.
 
@@ -339,17 +354,17 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Hold a Key for a friend                ⋮  │
+│ ←  Hold a Fragment for a friend                ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   Diana wants you to hold a Key for her       │
+│   Diana wants you to hold a Fragment for her       │
 │   wallet recovery.                            │
 │                                               │
 │   What this means:                            │
 │   • You're not getting Diana's money.         │
 │   • You'll hold a piece of her recovery.      │
 │   • If she needs to recover, she'll ask you   │
-│     to share this Key back.                   │
+│     to share this Fragment back.                   │
 │   • She'll need pieces from several friends,  │
 │     not just yours.                           │
 │                                               │
@@ -363,16 +378,16 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 ```
 
 - **Educates first, asks second.** The Keeper might not have any context. Even if they do, the explicit list re-grounds them.
-- After tapping "I understand," they get a "show this QR to Diana" screen with their ephemeral pubkey. After receiving the encrypted Key, the app confirms reception and shows the ack QR for Diana to scan.
+- After tapping "I understand," they get a "show this QR to Diana" screen with their ephemeral pubkey. After receiving the encrypted Fragment, the app confirms reception and shows the ack QR for Diana to scan.
 
 ### 5.7 Keeper's wallet view — "I'm holding"
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Keys you're holding                    ⋮  │
+│ ←  Fragments you're holding                    ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   You're holding 3 Keys for friends.          │
+│   You're holding 3 Fragments for friends.          │
 │                                               │
 │   Diana                                     ›│
 │   added today, in person                      │
@@ -384,9 +399,9 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 │   added 1 year ago                            │
 │                                               │
 │                                               │
-│   Holding a Key never costs you anything      │
+│   Holding a Fragment never costs you anything      │
 │   and you can never spend their money. You    │
-│   can delete a Key, but they'll need to ask   │
+│   can delete a Fragment, but they'll need to ask   │
 │   you to replace it before they're at risk.   │
 │                                               │
 └───────────────────────────────────────────────┘
@@ -394,18 +409,18 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 
 Tap a row → detail screen with delete (friction: confirm twice), "respond to recovery request" (becomes active when the owner initiates recovery), and metadata (when added, in-person vs remote, owner display name).
 
-### 5.8 Home banner (P1, undelivered Keys outstanding)
+### 5.8 Home banner (P1, undelivered Fragments outstanding)
 
 ```
 ┌───────────────────────────────────────────────┐
-│  ⚠  3 Keys still on this device.              │
+│  ⚠  3 Fragments still on this device.              │
 │     Until they're delivered, your Circle      │
 │     isn't protecting anything.                │
 │                              Continue  ›      │
 └───────────────────────────────────────────────┘
 ```
 
-Persistent banner on home until either (a) all Keys delivered, or (b) user explicitly dismisses via "I changed my mind, just give me a seed phrase" path (which we offer for honesty and safety; see §7.1).
+Persistent banner on home until either (a) all Fragments delivered, or (b) user explicitly dismisses via "I changed my mind, just give me a seed phrase" path (which we offer for honesty and safety; see §7.1).
 
 ### 5.9 Recovery flow (P4)
 
@@ -414,17 +429,17 @@ Persistent banner on home until either (a) all Keys delivered, or (b) user expli
 │ ←  Recover your wallet                    ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   You'll need to gather Keys from your        │
+│   You'll need to gather Fragments from your        │
 │   Circle. Reach out to your Keepers and       │
-│   ask them to send their Keys back.           │
+│   ask them to send their Fragments back.           │
 │                                               │
 │   You need 3 of your 5 Keepers.               │
 │                                               │
-│   Keys collected:    0 of 3                   │
+│   Fragments collected:    0 of 3                   │
 │   ▓░░                                         │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │     Scan a Key from a Keeper         │    │
+│   │     Scan a Fragment from a Keeper         │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
 │   Receive via secure messenger      ›         │
@@ -434,26 +449,26 @@ Persistent banner on home until either (a) all Keys delivered, or (b) user expli
 └───────────────────────────────────────────────┘
 ```
 
-Then after one Key collected:
+Then after one Fragment collected:
 
 ```
 │   You need 3 of your 5 Keepers.               │
 │                                               │
-│   Keys collected:    1 of 3                   │
+│   Fragments collected:    1 of 3                   │
 │   ▓▓░                                         │
 │                                               │
 │   ✓ Mom                                       │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │     Scan another Key                 │    │
+│   │     Scan another Fragment                 │    │
 │   └─────────────────────────────────────┘    │
 ```
 
 After T collected, the wallet rebuilds automatically and we land on the success screen (mirror of regular onboarding success).
 
 - **Recovery does not require the original device.** The user can recover on any fresh ZODL install.
-- **Recovery does not consume the Keepers' Keys.** The Keepers retain their Keys after the recovery completes; we just transmit (not move). This is a deliberate UX choice — it means the user can re-recover later (e.g. if the first recovery device is also lost) without re-running the ceremony.
-- **However:** the user is strongly prompted at recovery success to **re-form their Circle with fresh Keys** because the act of recovery transmitted shares across new transport, and even with envelope encryption, conservative users may want fresh shares. Surface this as a recommendation, not a requirement.
+- **Recovery does not consume the Keepers' Fragments.** The Keepers retain their Fragments after the recovery completes; we just transmit (not move). This is a deliberate UX choice — it means the user can re-recover later (e.g. if the first recovery device is also lost) without re-running the ceremony.
+- **However:** the user is strongly prompted at recovery success to **re-form their Circle with fresh Fragments** because the act of recovery transmitted shares across new transport, and even with envelope encryption, conservative users may want fresh shares. Surface this as a recommendation, not a requirement.
 
 ### 5.10 Circle health (settings → Circle)
 
@@ -483,10 +498,10 @@ After T collected, the wallet rebuilds automatically and we land on the success 
 └───────────────────────────────────────────────┘
 ```
 
-- **Test recovery** is critical. It's a tap that simulates pulling shares from T Keepers (each Keeper gets a notification, approves, sends ack-only — not the actual Key). Tests the social graph without spending the trust. We absolutely need this; if the first time a user actually runs recovery is the real recovery, they will have a bad time.
-- **Replace a Keeper** triggers a re-share ceremony for that one slot (cryptographically nontrivial — see §6.4 — but UX is "scan with new Keeper, ack old Keeper's Key invalidated").
+- **Test recovery** is critical. It's a tap that simulates pulling shares from T Keepers (each Keeper gets a notification, approves, sends ack-only — not the actual Fragment). Tests the social graph without spending the trust. We absolutely need this; if the first time a user actually runs recovery is the real recovery, they will have a bad time.
+- **Replace a Keeper** triggers a re-share ceremony for that one slot (cryptographically nontrivial — see §6.4 — but UX is "scan with new Keeper, ack old Keeper's Fragment invalidated").
 - **Change Circle size** is a full re-share with new shares. Big-friction.
-- **Dissolve Circle** is "this isn't for me anymore." Drops all on-device Keys, sends a (best-effort) notification to all Keepers telling them their Keys are now orphaned. Notification is courteous, not load-bearing — the security model doesn't depend on Keepers complying.
+- **Dissolve Circle** is "this isn't for me anymore." Drops all on-device Fragments, sends a (best-effort) notification to all Keepers telling them their Fragments are now orphaned. Notification is courteous, not load-bearing — the security model doesn't depend on Keepers complying.
 
 ### 5.11 Onboarding integration (P2)
 
@@ -497,7 +512,7 @@ After seed-phrase introduction, before the standard "Back up your seed":
 │   How do you want to back up your wallet?     │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │  ⊙  Circle of Keys (recommended)    │    │
+│   │  ⊙  Trust Circle (recommended)    │    │
 │   │     Distribute your backup across   │    │
 │   │     trusted friends and family.     │    │
 │   │     No single piece can spend your  │    │
@@ -534,13 +549,13 @@ This proposal is design, not crypto, but the design decisions are informed by th
 
 ### 6.1 Envelope encryption around each share
 
-When the giver sends a Key, the Keeper's ephemeral X25519 pubkey is what the giver scans first (Keeper's "I'm ready" QR). The giver encrypts the SLIP-39 share to that pubkey + a freshly-generated one of their own (NaCl box / age recipient). The encrypted blob is what goes in the second QR.
+When the giver sends a Fragment, the Keeper's ephemeral X25519 pubkey is what the giver scans first (Keeper's "I'm ready" QR). The giver encrypts the SLIP-39 share to that pubkey + a freshly-generated one of their own (NaCl box / age recipient). The encrypted blob is what goes in the second QR.
 
 **Why this matters for UX:** the displayed QR codes are not raw shares. A bystander photographing the giver's QR can't reconstruct the share without the Keeper's ephemeral private key (which never leaves the Keeper's phone). This lets us tell the user "it's safe to do this in a busy café" — which we should say in the help copy, because otherwise users will avoid using the feature in any public setting and the friction will kill adoption.
 
 ### 6.2 Ack proves receipt, not retention
 
-The Keeper's ack QR contains a MAC over the encrypted share they received, signed with their long-term recovery pubkey. This proves the Keeper received the share. It does **not** prove they kept it (they could delete it the next minute). The UX says "Keeper confirmed receipt" — not "Keeper has safely stored your Key forever." Subtle wording difference; do not get this wrong.
+The Keeper's ack QR contains a MAC over the encrypted share they received, signed with their long-term recovery pubkey. This proves the Keeper received the share. It does **not** prove they kept it (they could delete it the next minute). The UX says "Keeper confirmed receipt" — not "Keeper has safely stored your Fragment forever." Subtle wording difference; do not get this wrong.
 
 ### 6.3 Remote handoff caveat
 
@@ -557,11 +572,11 @@ This is the hardest cryptography in the proposal. Naively, replacing one share r
 - v1: replacement is a full Circle re-share. Friction is high but model is honest.
 - v2 (research): proactive secret sharing schemes that allow share refresh without full reconstruction. Out of scope for v1 docs.
 
-The UI for v1 should be honest about this — "Replacing a Keeper will create new Keys for all your Keepers. You'll need to meet with each of them again." Not great. But it's the truth.
+The UI for v1 should be honest about this — "Replacing a Keeper will create new Fragments for all your Keepers. You'll need to meet with each of them again." Not great. But it's the truth.
 
 ### 6.5 Owner identity to Keeper
 
-Today's wireframe shows "Diana wants you to hold a Key" without any cryptographic basis for "this is actually from Diana." This is fine because the handshake is in-person — the Keeper sees Diana's face. For remote handoff, the giver's identity should be tied to their Zcash address (display: "Diana — z1abc...xyz"); the Keeper accepts based on that.
+Today's wireframe shows "Diana wants you to hold a Fragment" without any cryptographic basis for "this is actually from Diana." This is fine because the handshake is in-person — the Keeper sees Diana's face. For remote handoff, the giver's identity should be tied to their Zcash address (display: "Diana — z1abc...xyz"); the Keeper accepts based on that.
 
 **UX implication:** we never claim to verify identity. We claim to verify the receipt. Identity is the user's job.
 
@@ -575,8 +590,8 @@ A good product surface acknowledges what can go wrong. These are the items I'd s
 
 Some users will start a Circle setup, get cold feet, and want out. The UI must support this gracefully:
 
-- Before any Key is delivered: trivial. Just dissolve.
-- After some Keys are delivered: dissolve is best-effort (Keepers are notified that their Key is now orphaned; the Key is useless without the others). The user falls back to either (a) a fresh seed phrase or (b) the original BIP-39 if they opted into "Both."
+- Before any Fragment is delivered: trivial. Just dissolve.
+- After some Fragments are delivered: dissolve is best-effort (Keepers are notified that their Fragment is now orphaned; the Fragment is useless without the others). The user falls back to either (a) a fresh seed phrase or (b) the original BIP-39 if they opted into "Both."
 - **Critical**: never block "I want a regular seed phrase instead" behind Circle completion. If the user wants a paper backup, give them a paper backup. Don't trap them.
 
 ### 7.2 "My Keepers are unreachable"
@@ -599,7 +614,7 @@ Below the cryptographic threshold there's nothing to steal. At or above the thre
 
 ### 7.6 "I forget who my Keepers are"
 
-The Keeper names live on the user's device. If the user loses the device, the Keeper list is gone. **Mitigation:** include the Keeper name (or a hint) inside the recovery flow's first prompt — but the Keepers themselves know they hold a Key for the user. The recovery initiative can come from either side: the user asks the Keepers, or a Keeper sees a recovery request notification.
+The Keeper names live on the user's device. If the user loses the device, the Keeper list is gone. **Mitigation:** include the Keeper name (or a hint) inside the recovery flow's first prompt — but the Keepers themselves know they hold a Fragment for the user. The recovery initiative can come from either side: the user asks the Keepers, or a Keeper sees a recovery request notification.
 
 ### 7.7 "What if SLIP-39 has a vulnerability discovered later?"
 
@@ -642,10 +657,10 @@ Honest answer: the user is exposed. Same risk as any seed format. Surface in adv
 
 These are the decisions I need from product/eng/security before this becomes implementation work:
 
-1. **Naming.** "Circle of Keys" vs "Trust Circle" vs "Keepers" vs other. I have an opinion but don't insist.
+1. **Naming.** "Trust Circle" vs "Trust Circle" vs "Keepers" vs other. I have an opinion but don't insist.
 2. **Default threshold.** I've recommended 3-of-5; some teams prefer 2-of-3 for adoption reasons (lower friction). Tradeoff is real. **My take: 3-of-5 default, present 2-of-3 prominently as "simpler.**"
 3. **Onboarding default.** Do we default new users to Circle, to seed phrase, or to "Both"? **My take: Circle default, with "Both" as the strongly-suggested option for users who indicate non-trivial holdings.**
-4. **Keeper-only install path.** Do we let a Keeper install ZODL with no wallet of their own and use the app purely as a Keeper? **My take: yes. The friction of "you must create a wallet to hold a friend's Key" is a deal-breaker.** Design implication: a "Keeper-only" install mode.
+4. **Keeper-only install path.** Do we let a Keeper install ZODL with no wallet of their own and use the app purely as a Keeper? **My take: yes. The friction of "you must create a wallet to hold a friend's Fragment" is a deal-breaker.** Design implication: a "Keeper-only" install mode.
 5. **Remote handoff in MVP.** Include or defer? **My take: defer to phase 2. In-person only for v1 keeps the trust model clean.**
 6. **Replace-a-Keeper friction.** v1 is full re-share; the UX is painful. Do we want this in MVP at all, or hide it behind "advanced settings → reform Circle"? **My take: hide in MVP; explicit "Replace a Keeper" surfaces in phase 2.**
 7. **Convert existing BIP-39 to SLIP-39.** This is the P1 primary use case (existing users with funds). The SLIP-39 spec defines BIP-39 → SLIP-39 conversion but with subtle properties (passphrase handling, account model). Does the SDK support this? **Need engineering spike before promising this in MVP.**
@@ -672,19 +687,20 @@ Mistakes in framing or threat-model exposition are mine.
 
 Words we use:
 - **Circle** (the feature, the group)
-- **Keeper** (a trusted person holding a Key)
-- **Key** (one SLIP-39 share, in user-facing language)
-- **Recover** (the action of rebuilding a wallet from Keys)
+- **Keeper** (a trusted person holding a Fragment)
+- **Fragment** (one SLIP-39 share, in user-facing language)
+- **Recover** (the action of rebuilding a wallet from Fragments)
 - **Form your Circle** (the setup action)
-- **Send a Key to a Keeper** (the delivery action)
-- **Hold a Key for someone** (the Keeper's action)
+- **Send a Fragment to a Keeper** (the delivery action)
+- **Hold a Fragment for someone** (the Keeper's action)
 
 Words we avoid in user-facing copy:
 - **Share** (already overloaded; means social-media-share to users)
+- **Key** (collides with private key / public key / recovery key)
 - **Shamir** (technical jargon; surface only in advanced/tooltip)
 - **SLIP-39** (technical jargon; surface only in advanced/tooltip)
 - **Threshold** (abstract; we say "how many Keepers need to cooperate")
-- **Secret** (overdramatic and imprecise)
+- **Secret** (overdramatic and competes with colloquial "wallet secret")
 - **Backup** (we say "recovery" — distinguishes from the failure-implying-it-already-failed framing)
 
 ---
