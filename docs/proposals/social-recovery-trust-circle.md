@@ -164,7 +164,7 @@ I'll wireframe each screen as ASCII (good enough to communicate layout to engine
 │                                               │
 │                                               │
 │   ┌─────────────────────────────────────┐     │
-│   │     Set up your Trust Circle         │    │
+│   │         Set up Trust Circle         │    │
 │   └─────────────────────────────────────┘     │
 │                                               │
 │   I'm holding Fragments for someone else  ›   │
@@ -173,7 +173,7 @@ I'll wireframe each screen as ASCII (good enough to communicate layout to engine
 └───────────────────────────────────────────────┘
 ```
 
-- **Primary CTA**: Set up your Trust Circle.
+- **Primary CTA**: Set up Trust Circle.
 - **Secondary actions**:
   - I'm holding Fragments for someone else → entry for P3.
   - Recover a wallet using my Trust Circle → entry for P4.
@@ -490,7 +490,7 @@ After T collected, the wallet rebuilds automatically and we land on the success 
 │                                               │
 │   Test recovery                            ›  │
 │   Replace a Keeper                         ›  │
-│   Change Trust Circle size...              ›  │
+│   Resize Trust Circle...                   ›  │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
 │   │     Dissolve Trust Circle           │    │
@@ -501,7 +501,7 @@ After T collected, the wallet rebuilds automatically and we land on the success 
 
 - **Test recovery** is critical. It's a tap that simulates pulling shares from T Keepers (each Keeper gets a notification, approves, sends ack-only — not the actual Fragment). Tests the social graph without spending the trust. We absolutely need this; if the first time a user actually runs recovery is the real recovery, they will have a bad time.
 - **Replace a Keeper** triggers a re-share ceremony for that one slot (cryptographically nontrivial — see §6.4 — but UX is "scan with new Keeper, ack old Keeper's Fragment invalidated").
-- **Change Trust Circle size** is a full re-share with new shares. Big-friction.
+- **Resize Trust Circle** is a full re-share with new shares. Big-friction.
 - **Dissolve Trust Circle** is "this isn't for me anymore." Drops all on-device Fragments, sends a (best-effort) notification to all Keepers telling them their Fragments are now orphaned. Notification is courteous, not load-bearing — the security model doesn't depend on Keepers complying.
 
 ### 5.11 Onboarding integration (P2)
