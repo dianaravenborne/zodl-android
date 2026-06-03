@@ -44,7 +44,7 @@ Candidates considered:
 - **"Trust Circle"** — what we picked.
   - "Trust" puts the load-bearing word first: this is a system of trust, not a system of cryptography (the cryptography is incidental to the user experience).
   - "Circle" is a clean, geometrically-evocative noun — it pairs naturally with the visual metaphor (§ Appendix B: a literal circle of avatars).
-  - Verb-able: *form your Trust Circle, add a Keeper to your Circle, recover with your Circle.*
+  - Verb-able: *form your Trust Circle, add a Keeper to your Trust Circle, recover with your Trust Circle.*
   - Translates cleanly: Círculo de Confianza, Círculo de Confiança, Vertrauenskreis. No idiom-clashes.
 
 For the per-person noun, "Keeper" was the strongest from the start:
@@ -67,7 +67,7 @@ Alternatives reviewed for the share concept:
   - Visualizes well — broken-apart-but-rejoinable, which is what SLIP-39 actually does.
   - Translates cleanly: Fragmento, Fragmento, Fragment.
 
-For the rest of this document: **Circle** = the feature/group, **Keeper** = one trusted person, **Fragment** = one share.
+For the rest of this document: **Trust Circle** = the feature/group, **Keeper** = one trusted person, **Fragment** = one share.
 
 ---
 
@@ -77,16 +77,16 @@ For the rest of this document: **Circle** = the feature/group, **Keeper** = one 
 
 **P1 — Existing user with funds.** Has a ZODL wallet, knows about seed phrases, has been meaning to back up. Heard about a friend who lost ZEC and is finally taking action.
 
-**P2 — New user.** Installing ZODL for the first time. We can offer Circle setup as one of the backup options during onboarding, alongside seed phrase.
+**P2 — New user.** Installing ZODL for the first time. We can offer Trust Circle setup as one of the backup options during onboarding, alongside seed phrase.
 
 **P3 — Keeper.** Doesn't necessarily have a ZODL wallet of their own (yet). Their friend wants to give them a Fragment. Today's app requires them to install ZODL to accept it. **Design implication:** the install/onboard path for a Keeper-only flow needs to be lightweight; we can't gate Fragment acceptance behind full wallet creation.
 
-**P4 — Recovering user.** Has lost their phone, has a new device, has their Circle, needs to walk through reconstitution.
+**P4 — Recovering user.** Has lost their phone, has a new device, has their Trust Circle, needs to walk through reconstitution.
 
 ### 3.2 User stories
 
 **As an existing ZODL user (P1), I want to**
-- Convert my existing BIP-39 wallet into a SLIP-39 Circle without changing my Zcash receive addresses, so my existing balance and history are preserved.
+- Convert my existing BIP-39 wallet into a SLIP-39 Trust Circle without changing my Zcash receive addresses, so my existing balance and history are preserved.
 - Choose how many Keepers I want and how many of them have to cooperate to recover.
 - See clearly which Fragments have been delivered, which are still on my device waiting to go out, and who holds what.
 - Hand a Fragment to a Keeper in person via QR-scan, with confirmation on both sides, and have the Fragment wiped from my device once delivered.
@@ -95,7 +95,7 @@ For the rest of this document: **Circle** = the feature/group, **Keeper** = one 
 - Test that recovery works without actually losing my wallet.
 
 **As a new ZODL user (P2), I want to**
-- Be offered Circle backup as a first-class backup option during onboarding, framed clearly relative to seed-phrase backup so I can make an informed choice (or do both).
+- Be offered Trust Circle backup as a first-class backup option during onboarding, framed clearly relative to seed-phrase backup so I can make an informed choice (or do both).
 
 **As a Keeper (P3), I want to**
 - Accept a Fragment from a friend with a clear explanation of what I'm taking on (I'm not getting their money; I'm holding a fragment that needs T fragments to reconstitute).
@@ -114,7 +114,7 @@ For the rest of this document: **Circle** = the feature/group, **Keeper** = one 
 
 - Multisig (this is recovery of a single-signature wallet; key-share custody is different from spending-share custody).
 - Time-locked recovery / dead-man switches.
-- Inheritance flows (recovery after the user's death). These are real and important and out of scope for v1; the Circle data model should not preclude them in v2.
+- Inheritance flows (recovery after the user's death). These are real and important and out of scope for v1; the Trust Circle data model should not preclude them in v2.
 - Recovery via untrusted third-party (custodian-assisted recovery).
 - Reissuing a Fragment to the same Keeper without re-running the threshold ceremony (potential v2; raises subtle threat-model questions).
 
@@ -128,7 +128,7 @@ This is the part that decides whether the feature works or not. The user has to 
 2. **It takes T Keepers cooperating to recover, never T-1.** If T=3 and N=5, then any 3 of the 5 can rebuild the wallet; any 2 of them have nothing.
 3. **If too many of my Keepers' phones die, I can't recover.** N-T is the slack. T=3 of 5 means I can lose up to 2 Keepers (40%) and still recover; if I lose 3 of 5, I'm done.
 
-The product surface for this is two things: the **threshold picker** (§5.3), and the **Circle health screen** (§5.10).
+The product surface for this is two things: the **threshold picker** (§5.3), and the **Trust Circle health screen** (§5.10).
 
 **Mental model anti-pattern to avoid:** never use the word "share" in user-facing copy. Engineers know what a share is; users hear "share" and think "social media share, send to all." Use "Fragment." When we have to be precise (settings → advanced), we can say "SLIP-39 share" once in a tooltip and move on.
 
@@ -140,43 +140,43 @@ I'll wireframe each screen as ASCII (good enough to communicate layout to engine
 
 ### 5.1 Entry points
 
-- **Onboarding** (P2): final backup step adds "Trust Circle (recommended)" alongside "Seed phrase." Default to Circle; surface seed as alternative.
+- **Onboarding** (P2): final backup step adds "Trust Circle (recommended)" alongside "Seed phrase." Default to Trust Circle; surface seed as alternative.
 - **Settings → Backup & Recovery** (P1): existing path. Add "Trust Circle" as a top-level item alongside today's seed-phrase backup.
-- **Home banner** (P1): if the user has chosen Circle but has undelivered Fragments, persistent banner *"You have 3 Fragments still on this device. Meet up with your Keepers."*
+- **Home banner** (P1): if the user has chosen Trust Circle but has undelivered Fragments, persistent banner *"You have 3 Fragments still on this device. Meet up with your Keepers."*
 - **Notifications**: weekly reminder while undelivered Fragments exist on the device.
 
-### 5.2 Circle landing screen
+### 5.2 Trust Circle landing screen
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Trust Circle                         ⋮  │
+│ ←  Trust Circle                            ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
 │        ◯ ◯ ◯ ◯ ◯                              │
 │        ━━━━━━━━━━ (visualization of circle)   │
 │                                               │
-│   Your Circle is the group of people who      │
-│   can help you recover your ZODL wallet if    │
-│   you ever lose access to it.                 │
+│   Your Trust Circle is the group of people    │
+│   who can help you recover your ZODL wallet   │
+│   if you ever lose access to it.              │
 │                                               │
 │   No single Keeper can spend your funds.      │
 │   It takes a group to recover your wallet.    │
 │                                               │
 │                                               │
-│   ┌─────────────────────────────────────┐    │
-│   │     Set up your Circle              │    │
-│   └─────────────────────────────────────┘    │
+│   ┌─────────────────────────────────────┐     │
+│   │     Set up your Trust Circle         │    │
+│   └─────────────────────────────────────┘     │
 │                                               │
-│   I'm holding Fragments for someone else  ›        │
-│   Recover a wallet using my Circle   ›        │
+│   I'm holding Fragments for someone else  ›   │
+│   Recover a wallet using my Trust Circle  ›   │
 │                                               │
 └───────────────────────────────────────────────┘
 ```
 
-- **Primary CTA**: Set up your Circle.
+- **Primary CTA**: Set up your Trust Circle.
 - **Secondary actions**:
   - I'm holding Fragments for someone else → entry for P3.
-  - Recover a wallet using my Circle → entry for P4.
+  - Recover a wallet using my Trust Circle → entry for P4.
 - **Why three CTAs from one screen?** Because P1, P3, P4 each arrive here from different mental contexts. Stacking them avoids hiding the Keeper/Recovery flows behind a hamburger.
 
 ### 5.3 Threshold picker — "How many Keepers?"
@@ -188,7 +188,7 @@ This is the load-bearing screen for the mental model.
 │ ←  How many Keepers?                       ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   Choose a Circle size                        │
+│   Choose a Trust Circle size                 │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
 │   │  ●  3 of 5  (recommended)           │    │
@@ -215,20 +215,20 @@ This is the load-bearing screen for the mental model.
 
 - **Three presets + custom.** Presets cover the common case; custom is gated behind a tap for the power user.
 - **Copy is explicit about tradeoff.** "Tolerates 2 Keepers being unavailable" is the right framing — what the user gains from N-T slack.
-- **Custom screen** shows a live preview: two segmented sliders ("How many people in your Circle?" 2–9, "How many to recover?" 1–N), with the same human-readable text underneath ("Tolerates X unavailable").
+- **Custom screen** shows a live preview: two segmented sliders ("How many people in your Trust Circle?" 2–9, "How many to recover?" 1–N), with the same human-readable text underneath ("Tolerates X unavailable").
 - **Hard floor**: T≥2, N≥3, T≤N. Reject T=1 (defeats the purpose) and N=2 with T=2 (no slack, worse than just two paper backups).
 
-### 5.4 Naming your Circle (and identifying your Keepers)
+### 5.4 Naming your Trust Circle (and identifying your Keepers)
 
 ```
 ┌───────────────────────────────────────────────┐
 │ ←  Add your Keepers                       ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   Add 5 Keepers to your Circle.               │
+│   Add 5 Keepers to your Trust Circle.        │
 │                                               │
 │   Give each one a name so you remember who    │
-│   holds which Fragment. They'll see this name too. │
+│   holds which Fragment. They'll see this    │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
 │   │ Keeper 1                            │    │
@@ -248,7 +248,7 @@ This is the load-bearing screen for the mental model.
 │   └─────────────────────────────────────┘    │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │     Generate Fragments                    │    │
+│   │     Generate Fragments              │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
 └───────────────────────────────────────────────┘
@@ -262,24 +262,24 @@ This is the load-bearing screen for the mental model.
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Your Circle is ready                   ⋮  │
+│ ←  Your Trust Circle is ready             ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
 │   ╭───────────────────────────────────╮      │
-│   │  5 Fragments created.                   │     │
+│   │  5 Fragments created.           │         │
 │   │  Meet up with each Keeper to       │     │
-│   │  hand them their Fragment.              │     │
+│   │  hand them their Fragment.      │         │
 │   ╰───────────────────────────────────╯      │
 │                                               │
-│   Mom              ● Fragment on device   Send  ›  │
-│   Sam              ● Fragment on device   Send  ›  │
-│   Jay              ● Fragment on device   Send  ›  │
-│   Lawyer           ● Fragment on device   Send  ›  │
-│   Safety deposit   ● Fragment on device   Save  ›  │
+│   Mom            ● on device   Send  ›       │
+│   Sam            ● on device   Send  ›       │
+│   Jay            ● on device   Send  ›       │
+│   Lawyer         ● on device   Send  ›       │
+│   Safety deposit ● on device   Save  ›       │
 │                                               │
 │                                               │
-│   ⚠  These Fragments are sitting on this device.   │
-│      Until you deliver them, your Circle is   │
+│   ⚠  These Fragments are on this device.     │
+│      Until delivered, your Trust Circle is   │
 │      not protecting anything.                 │
 │                                               │
 │                                               │
@@ -302,11 +302,11 @@ Two-screen split: the giver's flow and the Keeper's flow, designed to happen at 
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Sending Mom's Fragment                      ⋮  │
+│ ←  Sending Mom's Fragment                 ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
 │   Have Mom open ZODL and tap                  │
-│   "I'm holding Fragments for someone else."        │
+│   "I'm holding Fragments for someone else." │
 │                                               │
 │   When she's ready, scan her QR code.         │
 │                                               │
@@ -329,14 +329,14 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 │                                               │
 │   ┌─────────────────────────────────────┐    │
 │   │                                     │    │
-│   │     [ QR with encrypted Fragment ]       │    │
+│   │   [ QR with encrypted Fragment ]   │    │
 │   │                                     │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
 │   Waiting for Mom to confirm…  ●○○            │
 │                                               │
 │   ✓  Mom confirmed receipt.                   │
-│      This Fragment has been removed from your      │
+│      This Fragment has been removed from    │
 │      device.                                  │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
@@ -354,17 +354,17 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Hold a Fragment for a friend                ⋮  │
+│ ←  Hold a Fragment for a friend           ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   Diana wants you to hold a Fragment for her       │
+│   Diana wants you to hold a Fragment for    │
 │   wallet recovery.                            │
 │                                               │
 │   What this means:                            │
 │   • You're not getting Diana's money.         │
 │   • You'll hold a piece of her recovery.      │
 │   • If she needs to recover, she'll ask you   │
-│     to share this Fragment back.                   │
+│     to share this Fragment back.             │
 │   • She'll need pieces from several friends,  │
 │     not just yours.                           │
 │                                               │
@@ -384,10 +384,10 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Fragments you're holding                    ⋮  │
+│ ←  Fragments you're holding               ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   You're holding 3 Fragments for friends.          │
+│   You're holding 3 Fragments for friends.   │
 │                                               │
 │   Diana                                     ›│
 │   added today, in person                      │
@@ -399,10 +399,11 @@ Once the giver scans the Keeper's "I'm ready" QR (which carries an ephemeral pub
 │   added 1 year ago                            │
 │                                               │
 │                                               │
-│   Holding a Fragment never costs you anything      │
-│   and you can never spend their money. You    │
-│   can delete a Fragment, but they'll need to ask   │
-│   you to replace it before they're at risk.   │
+│   Holding a Fragment never costs you and    │
+│   you can never spend their money. You can   │
+│   delete a Fragment, but they'll need to     │
+│   ask you to replace it before they're at    │
+│   risk.                                      │
 │                                               │
 └───────────────────────────────────────────────┘
 ```
@@ -413,8 +414,8 @@ Tap a row → detail screen with delete (friction: confirm twice), "respond to r
 
 ```
 ┌───────────────────────────────────────────────┐
-│  ⚠  3 Fragments still on this device.              │
-│     Until they're delivered, your Circle      │
+│  ⚠  3 Fragments still on this device.       │
+│     Until delivered, your Trust Circle      │
 │     isn't protecting anything.                │
 │                              Continue  ›      │
 └───────────────────────────────────────────────┘
@@ -429,17 +430,17 @@ Persistent banner on home until either (a) all Fragments delivered, or (b) user 
 │ ←  Recover your wallet                    ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
-│   You'll need to gather Fragments from your        │
-│   Circle. Reach out to your Keepers and       │
-│   ask them to send their Fragments back.           │
+│   You'll need to gather Fragments from      │
+│   your Trust Circle. Reach out to your      │
+│   Keepers and ask them to send Fragments    │
 │                                               │
 │   You need 3 of your 5 Keepers.               │
 │                                               │
-│   Fragments collected:    0 of 3                   │
+│   Fragments collected:    0 of 3             │
 │   ▓░░                                         │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │     Scan a Fragment from a Keeper         │    │
+│   │     Scan a Fragment from a Keeper   │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
 │   Receive via secure messenger      ›         │
@@ -454,13 +455,13 @@ Then after one Fragment collected:
 ```
 │   You need 3 of your 5 Keepers.               │
 │                                               │
-│   Fragments collected:    1 of 3                   │
+│   Fragments collected:    1 of 3             │
 │   ▓▓░                                         │
 │                                               │
 │   ✓ Mom                                       │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │     Scan another Fragment                 │    │
+│   │     Scan another Fragment           │    │
 │   └─────────────────────────────────────┘    │
 ```
 
@@ -468,13 +469,13 @@ After T collected, the wallet rebuilds automatically and we land on the success 
 
 - **Recovery does not require the original device.** The user can recover on any fresh ZODL install.
 - **Recovery does not consume the Keepers' Fragments.** The Keepers retain their Fragments after the recovery completes; we just transmit (not move). This is a deliberate UX choice — it means the user can re-recover later (e.g. if the first recovery device is also lost) without re-running the ceremony.
-- **However:** the user is strongly prompted at recovery success to **re-form their Circle with fresh Fragments** because the act of recovery transmitted shares across new transport, and even with envelope encryption, conservative users may want fresh shares. Surface this as a recommendation, not a requirement.
+- **However:** the user is strongly prompted at recovery success to **re-form their Trust Circle with fresh Fragments** because the act of recovery transmitted shares across new transport, and even with envelope encryption, conservative users may want fresh shares. Surface this as a recommendation, not a requirement.
 
-### 5.10 Circle health (settings → Circle)
+### 5.10 Trust Circle health (settings → Trust Circle)
 
 ```
 ┌───────────────────────────────────────────────┐
-│ ←  Your Circle                            ⋮  │
+│ ←  Your Trust Circle                      ⋮  │
 ├───────────────────────────────────────────────┤
 │                                               │
 │      ◯ ◯ ◯ ◯ ◯                                │
@@ -489,10 +490,10 @@ After T collected, the wallet rebuilds automatically and we land on the success 
 │                                               │
 │   Test recovery                            ›  │
 │   Replace a Keeper                         ›  │
-│   Change Circle size...                    ›  │
+│   Change Trust Circle size...              ›  │
 │                                               │
 │   ┌─────────────────────────────────────┐    │
-│   │     Dissolve Circle                  │    │
+│   │     Dissolve Trust Circle           │    │
 │   └─────────────────────────────────────┘    │
 │                                               │
 └───────────────────────────────────────────────┘
@@ -500,8 +501,8 @@ After T collected, the wallet rebuilds automatically and we land on the success 
 
 - **Test recovery** is critical. It's a tap that simulates pulling shares from T Keepers (each Keeper gets a notification, approves, sends ack-only — not the actual Fragment). Tests the social graph without spending the trust. We absolutely need this; if the first time a user actually runs recovery is the real recovery, they will have a bad time.
 - **Replace a Keeper** triggers a re-share ceremony for that one slot (cryptographically nontrivial — see §6.4 — but UX is "scan with new Keeper, ack old Keeper's Fragment invalidated").
-- **Change Circle size** is a full re-share with new shares. Big-friction.
-- **Dissolve Circle** is "this isn't for me anymore." Drops all on-device Fragments, sends a (best-effort) notification to all Keepers telling them their Fragments are now orphaned. Notification is courteous, not load-bearing — the security model doesn't depend on Keepers complying.
+- **Change Trust Circle size** is a full re-share with new shares. Big-friction.
+- **Dissolve Trust Circle** is "this isn't for me anymore." Drops all on-device Fragments, sends a (best-effort) notification to all Keepers telling them their Fragments are now orphaned. Notification is courteous, not load-bearing — the security model doesn't depend on Keepers complying.
 
 ### 5.11 Onboarding integration (P2)
 
@@ -538,8 +539,8 @@ After seed-phrase introduction, before the standard "Back up your seed":
 └───────────────────────────────────────────────┘
 ```
 
-- **"Both" is the third option.** This is the honest answer for most users. A seed phrase in a safe + a Circle of three people = two genuinely-independent recovery paths.
-- **Defaulting to Circle** for the highlight is a product bet: we believe the Circle UX produces better real-world recovery outcomes for typical users. The seed-phrase option is not hidden; it's clearly labeled as the alternative.
+- **"Both" is the third option.** This is the honest answer for most users. A seed phrase in a safe + a Trust Circle of three people = two genuinely-independent recovery paths.
+- **Defaulting to Trust Circle** for the highlight is a product bet: we believe the Trust Circle UX produces better real-world recovery outcomes for typical users. The seed-phrase option is not hidden; it's clearly labeled as the alternative.
 
 ---
 
@@ -569,7 +570,7 @@ The Keeper's ack QR contains a MAC over the encrypted share they received, signe
 
 This is the hardest cryptography in the proposal. Naively, replacing one share requires re-sharing the entire secret (because share sets are not composable). UX-wise we should:
 
-- v1: replacement is a full Circle re-share. Friction is high but model is honest.
+- v1: replacement is a full Trust Circle re-share. Friction is high but model is honest.
 - v2 (research): proactive secret sharing schemes that allow share refresh without full reconstruction. Out of scope for v1 docs.
 
 The UI for v1 should be honest about this — "Replacing a Keeper will create new Fragments for all your Keepers. You'll need to meet with each of them again." Not great. But it's the truth.
@@ -588,17 +589,17 @@ A good product surface acknowledges what can go wrong. These are the items I'd s
 
 ### 7.1 "I changed my mind"
 
-Some users will start a Circle setup, get cold feet, and want out. The UI must support this gracefully:
+Some users will start a Trust Circle setup, get cold feet, and want out. The UI must support this gracefully:
 
 - Before any Fragment is delivered: trivial. Just dissolve.
 - After some Fragments are delivered: dissolve is best-effort (Keepers are notified that their Fragment is now orphaned; the Fragment is useless without the others). The user falls back to either (a) a fresh seed phrase or (b) the original BIP-39 if they opted into "Both."
-- **Critical**: never block "I want a regular seed phrase instead" behind Circle completion. If the user wants a paper backup, give them a paper backup. Don't trap them.
+- **Critical**: never block "I want a regular seed phrase instead" behind Trust Circle completion. If the user wants a paper backup, give them a paper backup. Don't trap them.
 
 ### 7.2 "My Keepers are unreachable"
 
 Real failure mode: T=3 of 5, two Keepers have died, one is in a coma, one ghosted me, one is my mom who answers. Recovery is impossible.
 
-This is the correct outcome of self-custody with a too-thin Circle — but the product should help users avoid getting here. The threshold picker should bias toward generous N-T slack (recommended preset is 3-of-5, which tolerates 40% loss). Settings should periodically remind the user to test recovery (§5.10).
+This is the correct outcome of self-custody with a too-thin Trust Circle — but the product should help users avoid getting here. The threshold picker should bias toward generous N-T slack (recommended preset is 3-of-5, which tolerates 40% loss). Settings should periodically remind the user to test recovery (§5.10).
 
 ### 7.3 "A Keeper's phone is stolen"
 
@@ -606,7 +607,7 @@ If a Keeper's phone is compromised, one share leaks. Below threshold, this leaks
 
 ### 7.4 "All my Keepers are at the same dinner party and the building collapses"
 
-Geographic distribution is a UX recommendation we should surface in the help copy. We can't enforce it, but a tip at Circle setup time — "consider including Keepers in different cities" — is good practice and free.
+Geographic distribution is a UX recommendation we should surface in the help copy. We can't enforce it, but a tip at Trust Circle setup time — "consider including Keepers in different cities" — is good practice and free.
 
 ### 7.5 "My Keeper is malicious and colludes with T-1 other Keepers"
 
@@ -633,12 +634,12 @@ Honest answer: the user is exposed. Same risk as any seed format. Surface in adv
 
 ### Phase 1 — MVP: in-person ceremony only
 - Onboarding integration (P2)
-- Circle creation (5.2–5.5)
+- Trust Circle creation (5.2–5.5)
 - In-person QR handoff (5.6, both sides)
 - Keeper holding screen (5.7)
 - Home banner (5.8)
 - Recovery flow (5.9)
-- Circle health (5.10) minus "Test recovery" and "Replace a Keeper"
+- Trust Circle health (5.10) minus "Test recovery" and "Replace a Keeper"
 
 ### Phase 2 — Maturity
 - Test recovery (essential; phase 1.5 if eng capacity allows)
@@ -659,13 +660,13 @@ These are the decisions I need from product/eng/security before this becomes imp
 
 1. **Naming.** "Trust Circle" vs "Trust Circle" vs "Keepers" vs other. I have an opinion but don't insist.
 2. **Default threshold.** I've recommended 3-of-5; some teams prefer 2-of-3 for adoption reasons (lower friction). Tradeoff is real. **My take: 3-of-5 default, present 2-of-3 prominently as "simpler.**"
-3. **Onboarding default.** Do we default new users to Circle, to seed phrase, or to "Both"? **My take: Circle default, with "Both" as the strongly-suggested option for users who indicate non-trivial holdings.**
+3. **Onboarding default.** Do we default new users to Trust Circle, to seed phrase, or to "Both"? **My take: Trust Circle default, with "Both" as the strongly-suggested option for users who indicate non-trivial holdings.**
 4. **Keeper-only install path.** Do we let a Keeper install ZODL with no wallet of their own and use the app purely as a Keeper? **My take: yes. The friction of "you must create a wallet to hold a friend's Fragment" is a deal-breaker.** Design implication: a "Keeper-only" install mode.
 5. **Remote handoff in MVP.** Include or defer? **My take: defer to phase 2. In-person only for v1 keeps the trust model clean.**
-6. **Replace-a-Keeper friction.** v1 is full re-share; the UX is painful. Do we want this in MVP at all, or hide it behind "advanced settings → reform Circle"? **My take: hide in MVP; explicit "Replace a Keeper" surfaces in phase 2.**
+6. **Replace-a-Keeper friction.** v1 is full re-share; the UX is painful. Do we want this in MVP at all, or hide it behind "advanced settings → reform Trust Circle"? **My take: hide in MVP; explicit "Replace a Keeper" surfaces in phase 2.**
 7. **Convert existing BIP-39 to SLIP-39.** This is the P1 primary use case (existing users with funds). The SLIP-39 spec defines BIP-39 → SLIP-39 conversion but with subtle properties (passphrase handling, account model). Does the SDK support this? **Need engineering spike before promising this in MVP.**
-8. **Backwards compatibility.** If a user creates a Circle, can they ever go back to plain seed phrase later without dissolving? **My take: yes — "export as seed phrase" should always be available in advanced settings, with strong friction. Self-custody means user always retains escape hatch.**
-9. **Multi-wallet users.** ZODL supports multiple wallets per install. Is each wallet's Circle independent? **My take: yes, each wallet has its own Circle. Sharing one Circle across wallets is conceptually possible but creates correlation surface.**
+8. **Backwards compatibility.** If a user creates a Trust Circle, can they ever go back to plain seed phrase later without dissolving? **My take: yes — "export as seed phrase" should always be available in advanced settings, with strong friction. Self-custody means user always retains escape hatch.**
+9. **Multi-wallet users.** ZODL supports multiple wallets per install. Is each wallet's Trust Circle independent? **My take: yes, each wallet has its own Trust Circle. Sharing one Trust Circle across wallets is conceptually possible but creates correlation surface.**
 10. **iOS parity.** This proposal is Android-focused. Does iOS ship at parity? **My take: yes. The whole feature degrades if cross-platform handoff doesn't work (e.g., my Keeper Mom has iOS, I have Android). The protocol must be platform-neutral.**
 
 ---
@@ -686,11 +687,11 @@ Mistakes in framing or threat-model exposition are mine.
 ## Appendix A — Copy bible
 
 Words we use:
-- **Circle** (the feature, the group)
+- **Trust Circle** (the feature, the group)
 - **Keeper** (a trusted person holding a Fragment)
 - **Fragment** (one SLIP-39 share, in user-facing language)
 - **Recover** (the action of rebuilding a wallet from Fragments)
-- **Form your Circle** (the setup action)
+- **Form your Trust Circle** (the setup action)
 - **Send a Fragment to a Keeper** (the delivery action)
 - **Hold a Fragment for someone** (the Keeper's action)
 
@@ -709,7 +710,7 @@ Words we avoid in user-facing copy:
 
 This document uses ASCII to communicate layout. The brand-aligned visual work I'd push for:
 
-- **The Circle as the dominant visual metaphor.** A literal circle of avatars / dots / silhouettes. Each Keeper is a position on the circle. Delivered = filled. Undelivered = outline. The visual itself teaches the model.
+- **The Trust Circle as the dominant visual metaphor.** A literal circle of avatars / dots / silhouettes. Each Keeper is a position on the circle. Delivered = filled. Undelivered = outline. The visual itself teaches the model.
 - **Color signal for share state.** Orange = on-device-undelivered (liability), green = delivered, gray = paper.
 - **Iconography for "in-person ceremony"** — two phones tipping toward each other, QR-codes-meeting. We want this to feel like a moment, not a transaction.
-- **Avoid lock/vault iconography** — every wallet uses it; the Circle metaphor is more distinctive.
+- **Avoid lock/vault iconography** — every wallet uses it; the Trust Circle metaphor is more distinctive.
